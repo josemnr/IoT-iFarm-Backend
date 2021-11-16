@@ -8,4 +8,4 @@ class Feedback extends Database {
     }
 }
 
-module.exports = new Greenhouse();
+module.exports = new Feedback();
