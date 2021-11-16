@@ -1,0 +1,5 @@
+applications:
+- name: iFarm-Backend
+  random-route: true
+  path: ./
+  memory: 128M
