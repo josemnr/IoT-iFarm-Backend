@@ -3,6 +3,7 @@ const joi = require('@hapi/joi');
 const greenhouseIdSchema = joi.string().regex(/^[0-9a-fA-F]{24}$/);
 const seedIdSchema = joi.string().regex(/^[0-9a-fA-F]{24}$/);
 const greenhouseNameSchema = joi.string().max(60);
+const deviceIdSchema = joi.string().max(60);
 const greenhouseLightSchema = joi.number();
 const greenhouseHumiditySchema = joi.number();
 const greenhouseTemperatureSchema = joi.number();
@@ -14,7 +15,8 @@ const createGreenhouseSchema = {
     humidity: greenhouseHumiditySchema.required(),
     temperature: greenhouseTemperatureSchema.required(),
     start_at: greenhouseDateSchema.required(),
-    seed_id: seedIdSchema.required()
+    seed_id: seedIdSchema.required(),
+    device_id: deviceIdSchema.required()
 };
 
 const updateGreenhouseSchema = {
@@ -23,7 +25,8 @@ const updateGreenhouseSchema = {
     humidity: greenhouseHumiditySchema,
     temperature: greenhouseTemperatureSchema,
     start_at: greenhouseDateSchema,
-    seed_id: seedIdSchema
+    seed_id: seedIdSchema,
+    device_id: deviceIdSchema
 };
 
 module.exports = {
