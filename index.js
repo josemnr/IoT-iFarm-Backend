@@ -45,6 +45,13 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use('/api/assets', express.static(path.join(__dirname, './public')));
 
+//Init resources
+const GreenhouseController = require("./src/controllers/greenhouse");
+const greenhouseAPIController = new GreenhouseController();
+
+const CalendarController = require("./src/controllers/calendar");
+const { update } = require('./src/models/user');
+const calendarAPIController = new CalendarController();
 
 // Init Routes for DB API
 iFarmApi(app);
@@ -56,16 +63,69 @@ client.on('connect', () => {
   })
 })
 
-client.on('message', (topic, payload) => {
-    console.log('Mensaje recibido:', topic, payload.toString())
+client.on('message', async (topic, payload) => {
+    var dailyData = JSON.parse(payload.toString())
+    console.log('Mensaje recibido:', topic, dailyData)
+
+    var req = {'device_id': dailyData.Id.toString()}
+
+    try {
+      let greenhousesArray = await greenhouseAPIController.getGreenhouses(req);
+
+      var currGreenhouseID;
+      var currGreenhouseObj;
+
+      for (var i = 0; i < greenhousesArray.length; i+=1) {
+        var greenhouseObj = { 'humidity': Math.round(dailyData.GroundHumidity),
+                              'temperature': Math.round(dailyData.Temperature),
+                              'light': Math.round(dailyData.Lighting) }
+
+        let greenhouseId = greenhousesArray[i]._id;
+        let greenhouse = greenhouseObj;
+        currGreenhouseID = greenhouseId;
+        currGreenhouseObj = greenhouseObj;
+
+        let greenhouseUpdateRes = await greenhouseAPIController.updateGreenhouse({ greenhouseId, greenhouse });
+        
+        console.log()
+      }
+
+      const d = new Date();
+      
+      if (d.getHours()%3 == 0) {
+        if (d.getMinutes() == 0){
+
+          let currentDate = d.toISOString().slice(0, 10)
+          let hour = d.getHours()
+          var filter = { 'date': currentDate.toString(),
+                         'greenhouse_id': currGreenhouseID.toString() }
+
+          let currDateObj = await calendarAPIController.getDates(filter);
+
+          currDateObj = currDateObj[0]
+
+          currDateObj.dailyData[hour] = { 'light': currGreenhouseObj.light, 
+                                                 'humidity': currGreenhouseObj.humidity, 
+                                                 'temperature': currGreenhouseObj.temperature }
+
+          delete Object.assign(currDateObj, {'id': currDateObj._id })._id
+
+          let updatedDateObj = await calendarAPIController.updateDate({dateId: currDateObj.id, date: currDateObj})
+        }
+      } 
+
+    }
+    catch(e) {
+      console.log("Error", e);
+    }
   })
 
 client.on('connect', () => {
-    client.publish(topic, 'PROBANDO MQTT EN TOPICO CON BROKER LOCAL', { qos: 0, retain: false }, (error) => {
-        if (error) {
-            console.error(error)
-        }
-    })
+    // client.publish(topic, 'PROBANDO MQTT EN TOPICO CON BROKER LOCAL', { qos: 0, retain: false }, (error) => {
+    //     if (error) {
+    //         console.error(error)
+    //     }
+    // })
 })
 
 app.get('/', (req, res) => {
