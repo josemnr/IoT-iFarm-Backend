@@ -18,7 +18,7 @@ class UserController {
         const { password } = user;
         const hashedPassword = await bcrypt.hash(password, 10);
         user.password = hashedPassword;
-        user.profile_pic = "https://ifarm-app-images.s3.amazonaws.com/images/profilePics/generic.jpg"
+        user.profile_pic = "https://firebasestorage.googleapis.com/v0/b/ifarm-7f0ea.appspot.com/o/profilePics%2Fgeneric.jpg?alt=media&token=f693f22a-d6d1-4897-a0ee-46d758dc054f"
         if (!user.google_id) {
             user.google_id = "";
         }
@@ -36,7 +36,7 @@ class UserController {
             user.password = hashedPassword;
         }
         if (!user.profile_pic) {
-            user.profile_pic = "https://ifarm-app-images.s3.amazonaws.com/images/profilePics/generic.jpg"
+            user.profile_pic = "https://firebasestorage.googleapis.com/v0/b/ifarm-7f0ea.appspot.com/o/profilePics%2Fgeneric.jpg?alt=media&token=f693f22a-d6d1-4897-a0ee-46d758dc054f"
         }
 
         if (!user.google_id) {
