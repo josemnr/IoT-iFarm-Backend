@@ -87,7 +87,7 @@ client.on('message', async (topic, payload) => {
 
         let greenhouseUpdateRes = await greenhouseAPIController.updateGreenhouse({ greenhouseId, greenhouse });
         
-        console.log()
+        console.log("Greenhouse actualizado(s)",greenhouseUpdateRes)
       }
 
       const d = new Date();
@@ -111,6 +111,8 @@ client.on('message', async (topic, payload) => {
           delete Object.assign(currDateObj, {'id': currDateObj._id })._id
 
           let updatedDateObj = await calendarAPIController.updateDate({dateId: currDateObj.id, date: currDateObj})
+
+          console.log("Calendar actualizado:",updatedDateObj)
         }
       } 
 
