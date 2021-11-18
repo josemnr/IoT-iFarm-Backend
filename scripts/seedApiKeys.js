@@ -28,6 +28,7 @@ const supervisorScopes = [
     'create:greenhouse',
     'update:greenhouse',
     'delete:greenhouse',
+    'read:feedback',
     'create:feedback',
     'update:feedback',
     'delete:feedback'
@@ -43,6 +44,7 @@ const employeeScopes = [
     'create:message',
     'read:calendar',
     'read:greenhouse',
+    'read:feedback',
     'create:feedback'
 ];
 
